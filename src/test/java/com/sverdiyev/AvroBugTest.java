@@ -1,3 +1,5 @@
+package com.sverdiyev;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.PrimitivesArrays;
@@ -9,6 +11,8 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+
+// all tests in this class pass, comments indicate where it should fail/should not fail.
 public class AvroBugTest {
 
     public static final String SCHEMA_STR = """
@@ -27,7 +31,7 @@ public class AvroBugTest {
 
 
     @Test
-    void arrayCreationPerCurrentSourceCode(){
+    void arrayCreationPerCurrentSourceCode() {
 
         GenericData genericData = new GenericData();
 
@@ -44,6 +48,7 @@ public class AvroBugTest {
         // adding to array, as per source code. Should not throw, but it does.
         // https://github.com/apache/avro/blob/main/lang/java/avro/src/main/java/org/apache/avro/generic/GenericDatumReader.java#L339
         assertThatThrownBy(() -> ((Collection) array).add(Instant.now()));
+        // java.lang.ClassCastException: class java.time.Instant cannot be cast to class java.lang.Long (java.time.Instant and java.lang.Long are in module java.base of loader 'bootstrap')
 
     }
 
@@ -54,6 +59,7 @@ public class AvroBugTest {
         var longArray = (Collection) new PrimitivesArrays.LongArray(1, SCHEMA);
 
         assertThatThrownBy(() -> longArray.add(Instant.now()));
+        // java.lang.ClassCastException: class java.time.Instant cannot be cast to class java.lang.Long (java.time.Instant and java.lang.Long are in module java.base of loader 'bootstrap')
     }
 
     @Test
